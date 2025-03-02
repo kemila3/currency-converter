@@ -1,10 +1,6 @@
 import mongoose from "mongoose";
 
 const Schema = new mongoose.Schema({
-    currencyType:{
-        type: String,
-        required: true
-    },
     FromCurrency:{
         type: String,
         required: true
@@ -26,4 +22,5 @@ const Schema = new mongoose.Schema({
     timestamps: true
 });
 
-export default mongoose.model("Currency", Schema);
+const Currency =  mongoose.model("Currency", Schema);
+export default Currency;

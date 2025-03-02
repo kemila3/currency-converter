@@ -1,4 +1,6 @@
 import dotenv from "dotenv";
+import { Schema } from "mongoose";
+import Currency from "../models/model.js";
 dotenv.config();
 
 const apiKey = process.env.API_KEY;
@@ -20,6 +22,15 @@ export const ConvertedAmount = async (req, res) => {
   const conversionRate = data.conversion_rates[ToCurrency.toUpperCase()];
   const amount = TransferAmount * conversionRate;
   const convertedAmount = amount.toFixed(2);
+
+  const newCurrency = new Currency({
+    FromCurrency,
+    ToCurrency,
+    TransferAmount,
+    ConvertedAmount: convertedAmount,
+  });
+
+  await newCurrency.save();
 
   return res.status(200).json({
     status: 200,
