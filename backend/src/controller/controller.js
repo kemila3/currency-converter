@@ -69,6 +69,16 @@ export const deleteRecord = async (req, res) => {
   });
 }
 
+
+export const getHistory = async(req, res) => {
+  const history = await Currency.find();
+  return res.status(200).json({
+    status: 200,
+    message: "History retrieved successfully",
+    data: history,
+  });
+}
+
 export const healthCheck = (req, res) => {
   res.status(200).json({
     status: 200,
