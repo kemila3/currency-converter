@@ -6,10 +6,10 @@ dotenv.config();
 
 const apiKey = process.env.API_KEY;
 
-export const ConvertedAmount = async (req, res) => {
+export const convertedAmount = async (req, res) => {
   const { FromCurrency, ToCurrency, TransferAmount } = req.body;
 
-  const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${FromCurrency.toUpperCase()}`;
+  const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${FromCurrency}`;
 
   if (!url) {
     return res.status(400).json({
@@ -20,7 +20,7 @@ export const ConvertedAmount = async (req, res) => {
 
   const response = await fetch(url);
   const data = await response.json();
-  const conversionRate = data.conversion_rates[ToCurrency.toUpperCase()];
+  const conversionRate = data.conversion_rates[ToCurrency];
   const amount = TransferAmount * conversionRate;
   const convertedAmount = amount.toFixed(2);
 
