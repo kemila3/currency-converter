@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   AppBar,
   Card,
@@ -34,9 +34,9 @@ const App = () => {
 
   const convertCurrency = async () => {
     const response = await axios.post("http://localhost:3000/convert", {
-      fromCurrency,
-      toCurrency,
-      amount,
+      FromCurrency: fromCurrency,
+      ToCurrency : toCurrency,
+      TransferAmount :  amount,
     });
 
     setConvertedAmount(response.data.data.ConvertedAmount);
@@ -47,6 +47,11 @@ const App = () => {
 
     setHistory(response.data.data);
   }
+
+  useEffect(() => {
+    getHistory();
+  }
+  , []);
 
   return (
     <>
@@ -110,7 +115,7 @@ const App = () => {
               }}
             />
 
-            <Button variant="contained" fullWidth color="primary">Transter Amount</Button>
+            <Button variant="contained" fullWidth color="primary" onClick={convertCurrency}>Transter Amount</Button>
 
               {ConvertedAmount && <Typography variant="h6">Converted Amount: {ConvertedAmount}</Typography>}
 
@@ -120,6 +125,19 @@ const App = () => {
         </Card>
 
         <Typography variant="h6">History</Typography>
+        {history.map((record) => {
+          return (
+            <Card key={record.id} style={{ marginTop: 10 }}>
+              <CardContent>
+                <Typography>From: {record.FromCurrency}</Typography>
+                <Typography>To: {record.ToCurrency}</Typography>
+                <Typography>Amount: {record.TransferAmount}</Typography>
+                <Typography>Converted Amount: {record.ConvertedAmount}</Typography>
+              </CardContent>
+            </Card>
+          );
+        }
+        )}
       </div>
     </>
   );
