@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { Schema } from "mongoose";
 import Currency from "../models/model.js";
+import { v4 as uuidv4 } from "uuid";
 dotenv.config();
 
 const apiKey = process.env.API_KEY;
@@ -23,7 +24,10 @@ export const ConvertedAmount = async (req, res) => {
   const amount = TransferAmount * conversionRate;
   const convertedAmount = amount.toFixed(2);
 
+  const uuid = uuidv4();
+
   const newCurrency = new Currency({
+    id: uuid,
     FromCurrency,
     ToCurrency,
     TransferAmount,
@@ -43,6 +47,27 @@ export const ConvertedAmount = async (req, res) => {
     },
   });
 };
+
+
+export const deleteRecord = async (req, res) => {
+  const { id } = req.params;
+
+  const record = await Currency.findById(id);
+
+  if
+    (!record) {
+    return res.status(404).json({
+      status: 404,
+      message: "Record not found",
+    });
+  }
+  
+  await Currency.findByIdAndDelete(id);
+  return res.status(200).json({
+    status: 200,
+    message: "Record deleted successfully",
+  });
+}
 
 export const healthCheck = (req, res) => {
   res.status(200).json({

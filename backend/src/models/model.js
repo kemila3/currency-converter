@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const Schema = new mongoose.Schema({
+    id:{
+        type: String,
+        required: true
+    },
     FromCurrency:{
         type: String,
         required: true
