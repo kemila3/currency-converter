@@ -17,6 +17,7 @@ import {
   Stack,
   IconButton,
   Box,
+  Alert
 } from "@mui/material";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import HistoryIcon from "@mui/icons-material/History";
@@ -36,6 +37,7 @@ const App = () => {
   const [amount, setAmount] = useState(1);
   const [convertedAmount, setConvertedAmount] = useState(null);
   const [history, setHistory] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     getHistory();
@@ -43,24 +45,41 @@ const App = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const handleError = (message) => {
+    setError(message);
+    setTimeout(() => setError(null), 5000);
+  };
+
   const convertCurrency = async () => {
-    const response = await axios.post("http://localhost:3000/convert", {
-      FromCurrency: fromCurrency,
-      ToCurrency: toCurrency,
-      TransferAmount: amount,
-    });
-    setConvertedAmount(response.data.data.ConvertedAmount);
-    getHistory();
+    try {
+      const response = await axios.post("http://localhost:3000/convert", {
+        FromCurrency: fromCurrency,
+        ToCurrency: toCurrency,
+        TransferAmount: amount,
+      });
+      setConvertedAmount(response.data.data.ConvertedAmount);
+      getHistory();
+    } catch (err) {
+      handleError("Server error: Unable to convert currency.");
+    }
   };
 
   const getHistory = async () => {
-    const response = await axios.get("http://localhost:3000/history");
-    setHistory([...response.data.data].reverse());
+    try {
+      const response = await axios.get("http://localhost:3000/history");
+      setHistory([...response.data.data].reverse()); 
+    } catch (err) {
+      handleError("Server error: Unable to fetch history.");
+    }
   };
 
   const deleteTransaction = async (id) => {
-    await axios.delete(`http://localhost:3000/delete/${id}`);
-    getHistory(); 
+    try {
+      await axios.delete(`http://localhost:3000/history/${id}`);
+      setHistory((prevHistory) => prevHistory.filter(record => record.id !== id)); 
+    } catch (err) {
+      handleError("Server error: Unable to delete transaction.");
+    }
   };
 
   
@@ -68,6 +87,7 @@ const App = () => {
   return (
     <>
       <CssBaseline />
+      {error && <Alert severity="error" sx={{ position: "absolute", top: 10, left: "50%", transform: "translateX(-50%)", zIndex: 1000 }}>{error}</Alert>}
       <AppBar position="relative">
         <Toolbar>
           <CurrencyExchangeIcon sx={{ marginRight: 2 }} />
