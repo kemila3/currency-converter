@@ -75,7 +75,7 @@ const App = () => {
 
   const deleteTransaction = async (id) => {
     try {
-      await axios.delete(`https://currencyconvert-5ad74dc4f95c.herokuapp.com/history/${id}`);
+      await axios.delete(`https://currencyconvert-5ad74dc4f95c.herokuapp.com/delete/${id}`);
       setHistory((prevHistory) => prevHistory.filter(record => record.id !== id)); 
     } catch (err) {
       handleError("Server error: Unable to delete transaction.");
