@@ -52,7 +52,7 @@ const App = () => {
 
   const convertCurrency = async () => {
     try {
-      const response = await axios.post("http://localhost:3000/convert", {
+      const response = await axios.post("https://currencyconvert-5ad74dc4f95c.herokuapp.com/convert", {
         FromCurrency: fromCurrency,
         ToCurrency: toCurrency,
         TransferAmount: amount,
@@ -66,7 +66,7 @@ const App = () => {
 
   const getHistory = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/history");
+      const response = await axios.get("https://currencyconvert-5ad74dc4f95c.herokuapp.com/history");
       setHistory([...response.data.data].reverse()); 
     } catch (err) {
       handleError("Server error: Unable to fetch history.");
@@ -75,7 +75,7 @@ const App = () => {
 
   const deleteTransaction = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/history/${id}`);
+      await axios.delete(`https://currencyconvert-5ad74dc4f95c.herokuapp.com/history/${id}`);
       setHistory((prevHistory) => prevHistory.filter(record => record.id !== id)); 
     } catch (err) {
       handleError("Server error: Unable to delete transaction.");
