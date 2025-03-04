@@ -13,3 +13,7 @@ How to run??
 7. npm i
 8. npm run dev
 9. go to url http://localhost:5173
+
+tired setting up locally? -->
+here is the deployed url. copy paste it in the browser :
+url : https://currencyconvert-5ad74dc4f95c.herokuapp.com
