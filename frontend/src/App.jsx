@@ -12,13 +12,15 @@ import {
   TextField,
   Button,
   CssBaseline,
-  Grid,
+  Grid2,
   Paper,
   Stack,
-  Grid2,
+  IconButton,
+  Box,
 } from "@mui/material";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import HistoryIcon from "@mui/icons-material/History";
+import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 
 const countries = [
@@ -35,6 +37,12 @@ const App = () => {
   const [convertedAmount, setConvertedAmount] = useState(null);
   const [history, setHistory] = useState([]);
 
+  useEffect(() => {
+    getHistory();
+    const interval = setInterval(getHistory, 5000); 
+    return () => clearInterval(interval);
+  }, []);
+
   const convertCurrency = async () => {
     const response = await axios.post("http://localhost:3000/convert", {
       FromCurrency: fromCurrency,
@@ -42,19 +50,20 @@ const App = () => {
       TransferAmount: amount,
     });
     setConvertedAmount(response.data.data.ConvertedAmount);
-    getHistory(); // Fetch history after conversion
+    getHistory();
   };
 
   const getHistory = async () => {
     const response = await axios.get("http://localhost:3000/history");
-    setHistory(response.data.data.reverse());
+    setHistory([...response.data.data].reverse());
   };
 
-  useEffect(() => {
-    getHistory();
-    const interval = setInterval(getHistory, 5000); // Poll every 5 seconds
-    return () => clearInterval(interval);
-  }, []);
+  const deleteTransaction = async (id) => {
+    await axios.delete(`http://localhost:3000/delete/${id}`);
+    getHistory(); 
+  };
+
+  
 
   return (
     <>
@@ -142,22 +151,25 @@ const App = () => {
               <Typography sx={{ mt: 2 }}>No transactions found.</Typography>
             ) : (
               history.map((record, index) => (
-                <Card key={index} sx={{ mt: 2, p: 2, borderRadius: 2 }}>
-                  <CardContent>
-                    <Stack direction="row" justifyContent="space-between">
-                      <Typography>
-                        <strong>{record.FromCurrency}</strong> →
-                        <strong> {record.ToCurrency}</strong>
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {new Date(record.createdAt).toLocaleString()}
-                      </Typography>
-                    </Stack>
+                <Card key={index} sx={{ mt: 2, p: 2, borderRadius: 2, display: 'flex', justifyContent: 'space-between' }}>
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography>
+                      <strong>{record.FromCurrency}</strong> →
+                      <strong> {record.ToCurrency}</strong>
+                    </Typography>
                     <Typography>Amount: {record.TransferAmount}</Typography>
                     <Typography>
                       Converted: <strong>{record.ConvertedAmount}</strong>
                     </Typography>
                   </CardContent>
+                  <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+                    <Typography variant="body2" color="textSecondary">
+                      {new Date(record.createdAt).toLocaleString()}
+                    </Typography>
+                    <IconButton onClick={() => deleteTransaction(record.id)} color="error" sx={{ mt: 1 }}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
                 </Card>
               ))
             )}
