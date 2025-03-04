@@ -5,8 +5,8 @@ const router = Router();
 
 router.get('/', healthCheck);
 router.post('/convert', convertedAmount);
-router.delete('/delete/:id', deleteRecord);
 router.get('/history', getHistory);
+router.delete('/delete/:id', deleteRecord);
 
 
 export default router;

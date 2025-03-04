@@ -51,8 +51,10 @@ export const convertedAmount = async (req, res) => {
 
 export const deleteRecord = async (req, res) => {
   const { id } = req.params;
+  console.log(id)
 
-  const record = await Currency.findById(id);
+  const record = await Currency.findOne({id:id});
+  console.log(record)
 
   if
     (!record) {
@@ -62,7 +64,7 @@ export const deleteRecord = async (req, res) => {
     });
   }
   
-  await Currency.findByIdAndDelete(id);
+  await Currency.findOneAndDelete({id:id});
   return res.status(200).json({
     status: 200,
     message: "Record deleted successfully",
